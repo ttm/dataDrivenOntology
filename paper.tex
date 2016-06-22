@@ -1,0 +1,157 @@
+% ****** Start of file aipsamp.tex ******
+%
+%   This file is part of the AIP files in the AIP distribution for REVTeX 4.
+%   Version 4.1 of REVTeX, October 2009
+%
+%   Copyright (c) 2009 American Institute of Physics.
+
+% Use this file as a source of example code for your aip document.
+% Use the file aiptemplate.tex as a template for your document.
+\documentclass[%
+ aip,
+ jmp,%
+ amsmath,amssymb,
+%preprint,%
+ reprint,%
+%author-year,%
+%author-numerical,%
+]{revtex4-1}
+
+\usepackage{enumitem}
+\usepackage{graphicx}% Include figure files
+\usepackage{grffile}
+\usepackage{dcolumn}% Align table columns on decimal point
+\usepackage{bm}% bold math
+%\usepackage[mathlines]{lineno}% Enable numbering of text and display math
+%\linenumbers\relax % Commence numbering lines
+\usepackage{multirow}
+\usepackage{color} % for the notes
+\usepackage{etex}
+\reserveinserts{58}
+\usepackage{morefloats}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\hypersetup{
+        colorlinks,
+        linkcolor={red!50!black},
+        citecolor={blue!50!black},
+        urlcolor={blue!80!black}
+}
+
+
+\maxdeadcycles=1000
+
+\begin{document}
+
+\preprint{XXXXX (preprint)}
+
+%\title[Evolution of interaction networks]{On the evolution of interaction networks: primitive typology of vertex, prominence of measures and activity statistics}% Force line breaks with \\
+%\title[Evolution of interaction networks]{On the evolution of interaction networks: a primitive typology of vertex}% Force line breaks with \\
+\title[Data-driven ontology synthesis]{A method for the synthesis of an
+ontology from predefined data}% Force line breaks with \\
+
+\author{Renato Fabbri}%
+ \homepage{http://ifsc.usp.br/~fabbri/}
+ \email{fabbri@usp.br}
+  \affiliation{ 
+S\~ao Carlos Institute of Physics, University of S\~ao Paulo (IFSC/USP)%\\This line break forced with \textbackslash\textbackslash
+}
+
+\author{Osvaldo N. Oliveira Jr.}
+  \homepage{www.polimeros.ifsc.usp.br/professors/professor.php?id=4}
+  \email{chu@ifsc.usp.br}
+ \altaffiliation[Also at ]{IFSC-USP}%Lines break automatically or can be forced with \\
+
+
+\date{\today}% It is always \today, today,
+             %  but any date may be explicitly specified
+
+\begin{abstract}
+OWL Ontologies are critical tools to describe taxonomies and the
+structure of knowledge.
+Most ontologies are created by domain experts even though the data they
+arrange is often given by a software system.
+This work presents a method for obtaining an ontology from predefined
+data.
+The resulting structure has the simplest form with an accurate
+support for the undelying information.
+\end{abstract}
+
+% \pacs{89.75.Fb,05.65.+b,89.65.-s}% PACS, the Physics and Astronomy
+\keywords{linked data, semantic web, big data, artificial intelligence}%Use showkeys class option if keyword
+\maketitle
+                   
+\section{Introduction}
+Ontologies and data-driven ontologies.
+
+\subsection{Related work}
+Ontology creation methods and data-driven methods.
+
+\section{Method}
+The method consists of probing the ontological structure in data with
+SPARQL queries and post-processing which can be divided in the following steps:
+\begin{enumerate}[leftmargin=0cm]
+    \item Obtaining all distinct classes with the query:\\
+        \texttt{SELECT DISTINCT ?class WHERE \{ ?s a ?class \}}
+    \item Obtaining all distinct properties with the query:\\
+        \texttt{SELECT DISTINCT ?p WHERE \{ ?s ?p ?o \}}
+    \item For each class, get distinct subject classes and predicates where the
+        the object is an instance of the class:\\
+        \texttt{SELECT DISTINCT ?p ?cs WHERE \{ ?i a <class\_uri> . ?s ?p ?i . ?s
+        a ?cs . \}}
+    \item For each class, get distinct predicates and objects where the
+        subject is an instance of such class:\\
+        \texttt{SELECT DISTINCT ?p ?co (datatype(?o) as ?do) WHERE \{ ?i
+                a <class\_uri> . ?i ?p ?o . OPTIONAL \{ ?o a ?co . \} \}}
+    \item For each property, check if it is functional, i.e. if it
+        occurs only once with each subject:\\
+        \texttt{SELECT DISTINCT (COUNT(?o) as ?co) WHERE \{ ?s
+            <property\_uri> ?o \} GROUP BY ?s}
+    \item For each property, find the incident range and domain with the
+        queries:\\
+        \texttt{SELECT DISTINCT ?co (datatype(?o) as ?do) WHERE \{ ?s
+                <property\_uri> ?o . OPTIONAL \{ ?o a ?co . \} \}}
+        \texttt{SELECT DISTINCT ?cs WHERE \{ ?s <property\_uri> ?o . ?s a ?cs . \}}
+    \item For each instance of each class, get all distinct predicates.
+        For each predicate, check if all instances of the class
+        hold such relationship (existential restriction):\\
+        \texttt{SELECT DISTINCT ?p WHERE \{ ?s a <class\_uri>. ?s ?p ?o
+        . \}}\\
+        \texttt{SELECT DISTINCT ?s WHERE \{ ?s a <class\_uri> \}}\\
+        \texttt{SELECT DISTINCT ?s ?co  (datatype(?o) as ?do) WHERE \{?s
+                a <class\_uri>. ?s <property\_uri> ?o . OPTIONAL \{?o a ?co . \}\}}
+    \item and if all instances that hold such relationship are instances of the class
+        (universal restriction):\\
+        \texttt{SELECT DISTINCT ?s WHERE \{ ?s <property\_uri> ?o . \}}
+    \item Draw each class, each property and the overall figure.
+    \item Make \texttt{rdfs:subClassOf} and \texttt{rdfs:subPropertyOf}
+        statements to better organize knowledge and link to third party
+        ontologies and data.
+    \item
+\end{enumerate}
+
+\section{Results and discussion}
+Figure
+\section{Conclusions}
+
+\begin{acknowledgments}
+Renato Fabbri is grateful to CNPq (process: 140860/2013-4,
+project 870336/1997-5), United Nations Development Program (PNUD/ONU, contract: 2013/000566; project BRA/12/018)  and 
+the Postgraduate Committee of the IFSC/USP.
+\end{acknowledgments}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\appendix
+\section{Foo}
+Bar
+
+\nocite{*}
+\bibliography{paper}% Produces the bibliography via BibTeX.
+
+\end{document}
+%
+% ****** End of file aipsamp.tex ******
+
+
+
