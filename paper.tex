@@ -99,8 +99,8 @@ SPARQL queries and post-processing which can be divided in the following steps:
         the object is an instance of the class:\\
         \texttt{SELECT DISTINCT ?p ?cs WHERE \{ ?i a <class\_uri> . ?s ?p ?i . ?s
         a ?cs . \}}
-    \item For each class, get distinct predicates and objects where the
-        subject is an instance of such class:\\
+    \item For each class, get distinct predicates and object classes or
+        datatypes where the subject is an instance of such class:\\
         \texttt{SELECT DISTINCT ?p ?co (datatype(?o) as ?do) WHERE \{ ?i
                 a <class\_uri> . ?i ?p ?o . OPTIONAL \{ ?o a ?co . \} \}}
     \item For each property, check if it is functional, i.e. if it
